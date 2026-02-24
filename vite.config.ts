@@ -11,6 +11,13 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    proxy: {
+      "/api/bosch": {
+        target: "https://hmi-demo.remote-manager.us-1.bosch-iot-suite.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/bosch/, ""),
+      },
+    },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {

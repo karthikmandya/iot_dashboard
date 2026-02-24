@@ -13,10 +13,10 @@ interface SensorData {
 const AUTH_HEADER = "Basic " + btoa("admin:CcX1Hx?92)[6|Mym8W@b");
 
 const SENSOR_URL =
-  "https://hmi-demo.remote-manager.us-1.bosch-iot-suite.com/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Sensor/da%3Aitem%3AZigBee%3A286d97000115b3b3%231%233%3ASensor/state-vars/value";
+  "/api/bosch/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Sensor/da%3Aitem%3AZigBee%3A286d97000115b3b3%231%233%3ASensor/state-vars/value";
 
 const SWITCH_BASE_URL =
-  "https://hmi-demo.remote-manager.us-1.bosch-iot-suite.com/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Switch/da:item:ZigBee:001788010eb1c51f%2311%232:Switch/actions";
+  "/api/bosch/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Switch/da:item:ZigBee:001788010eb1c51f%2311%232:Switch/actions";
 
 const authHeaders = { Authorization: AUTH_HEADER };
 
