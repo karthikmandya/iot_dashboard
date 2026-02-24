@@ -47,7 +47,10 @@ const Index = () => {
     setToggling(true);
     try {
       const action = on ? "on" : "off";
-      await fetch(`${SWITCH_BASE_URL}/${action}`, { method: "POST", headers: authHeaders });
+      await fetch(`${SWITCH_BASE_URL}/${action}`, {
+        method: "POST",
+        headers: { ...authHeaders, "Content-Type": "application/json" },
+      });
       setDeviceOn(on);
       toast.success(`Device turned ${on ? "ON" : "OFF"}`);
     } catch {
