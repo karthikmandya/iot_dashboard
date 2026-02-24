@@ -10,11 +10,15 @@ interface SensorData {
   unit: string;
 }
 
+const AUTH_HEADER = "Basic " + btoa("admin:CcX1Hx?92)[6|Mym8W@b");
+
 const SENSOR_URL =
   "https://hmi-demo.remote-manager.us-1.bosch-iot-suite.com/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Sensor/da%3Aitem%3AZigBee%3A286d97000115b3b3%231%233%3ASensor/state-vars/value";
 
 const SWITCH_BASE_URL =
   "https://hmi-demo.remote-manager.us-1.bosch-iot-suite.com/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Switch/da:item:ZigBee:001788010eb1c51f%2311%232:Switch/actions";
+
+const authHeaders = { Authorization: AUTH_HEADER };
 
 const Index = () => {
   const [sensorData, setSensorData] = useState<SensorData | null>(null);
@@ -25,7 +29,7 @@ const Index = () => {
   const readSensor = async () => {
     setLoading(true);
     try {
-      const res = await fetch(SENSOR_URL);
+      const res = await fetch(SENSOR_URL, { headers: authHeaders });
       const data = await res.json();
       setSensorData({
         value: data.value.value.value,
@@ -43,7 +47,7 @@ const Index = () => {
     setToggling(true);
     try {
       const action = on ? "on" : "off";
-      await fetch(`${SWITCH_BASE_URL}/${action}`, { method: "POST" });
+      await fetch(`${SWITCH_BASE_URL}/${action}`, { method: "POST", headers: authHeaders });
       setDeviceOn(on);
       toast.success(`Device turned ${on ? "ON" : "OFF"}`);
     } catch {
