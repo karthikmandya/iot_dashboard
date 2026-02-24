@@ -1,15 +1,20 @@
 import { useState } from "react";
-import { Activity, Power, RefreshCw, Thermometer, Droplets, Gauge } from "lucide-react";
+import { Activity, Power, RefreshCw, Thermometer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
 interface SensorData {
-  temperature: number;
-  humidity: number;
-  pressure: number;
+  value: string;
+  unit: string;
 }
+
+const SENSOR_URL =
+  "https://hmi-demo.remote-manager.us-1.bosch-iot-suite.com/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Sensor/da%3Aitem%3AZigBee%3A286d97000115b3b3%231%233%3ASensor/state-vars/value";
+
+const SWITCH_BASE_URL =
+  "https://hmi-demo.remote-manager.us-1.bosch-iot-suite.com/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Switch/da:item:ZigBee:001788010eb1c51f%2311%232:Switch/actions";
 
 const Index = () => {
   const [sensorData, setSensorData] = useState<SensorData | null>(null);
@@ -20,17 +25,11 @@ const Index = () => {
   const readSensor = async () => {
     setLoading(true);
     try {
-      // TODO: Replace with your actual API endpoint
-      // const res = await fetch("http://your-backend/api/sensor");
-      // const data = await res.json();
-      // setSensorData(data);
-
-      // Mock data for demo
-      await new Promise((r) => setTimeout(r, 800));
+      const res = await fetch(SENSOR_URL);
+      const data = await res.json();
       setSensorData({
-        temperature: +(20 + Math.random() * 15).toFixed(1),
-        humidity: +(30 + Math.random() * 50).toFixed(1),
-        pressure: +(1000 + Math.random() * 30).toFixed(1),
+        value: data.value.value.value,
+        unit: data.value.unit.symbol,
       });
       toast.success("Sensor data updated");
     } catch {
@@ -43,14 +42,8 @@ const Index = () => {
   const toggleDevice = async (on: boolean) => {
     setToggling(true);
     try {
-      // TODO: Replace with your actual API endpoint
-      // await fetch("http://your-backend/api/device", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ state: on }),
-      // });
-
-      await new Promise((r) => setTimeout(r, 500));
+      const action = on ? "on" : "off";
+      await fetch(`${SWITCH_BASE_URL}/${action}`, { method: "POST" });
       setDeviceOn(on);
       toast.success(`Device turned ${on ? "ON" : "OFF"}`);
     } catch {
@@ -85,10 +78,8 @@ const Index = () => {
           </CardHeader>
           <CardContent>
             {sensorData ? (
-              <div className="grid grid-cols-3 gap-4">
-                <SensorValue icon={Thermometer} label="Temp" value={`${sensorData.temperature}°C`} />
-                <SensorValue icon={Droplets} label="Humidity" value={`${sensorData.humidity}%`} />
-                <SensorValue icon={Gauge} label="Pressure" value={`${sensorData.pressure} hPa`} />
+              <div className="flex justify-center">
+                <SensorValue icon={Thermometer} label="Temperature" value={`${sensorData.value}${sensorData.unit}`} />
               </div>
             ) : (
               <p className="text-sm text-muted-foreground text-center py-6">
