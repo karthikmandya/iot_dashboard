@@ -77,10 +77,10 @@ const Index = () => {
         {/* Sensor Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-base font-medium">Sensor Data</CardTitle>
+            <CardTitle className="text-base font-medium">Temperature in Lab</CardTitle>
             <Button onClick={readSensor} disabled={loading} size="sm" className="gap-2">
               <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-              {loading ? "Reading..." : "Read Sensor"}
+              {loading ? "Reading..." : "Get Updated Data"}
             </Button>
           </CardHeader>
           <CardContent>
@@ -90,7 +90,7 @@ const Index = () => {
               </div>
             ) : (
               <p className="text-sm text-muted-foreground text-center py-6">
-                Press "Read Sensor" to fetch data
+                Press "Get Updated Data" to fetch data
               </p>
             )}
           </CardContent>
@@ -104,9 +104,9 @@ const Index = () => {
                 <Power className={`h-5 w-5 transition-colors ${deviceOn ? "text-primary" : "text-muted-foreground"}`} />
               </div>
               <div>
-                <p className="text-sm font-medium">Device Power</p>
+                <p className="text-sm font-medium">Zigbee Bulb</p>
                 <p className={`text-xs font-mono ${deviceOn ? "text-success" : "text-muted-foreground"}`}>
-                  {deviceOn ? "● ONLINE" : "○ OFFLINE"}
+                  {deviceOn ? "● ON" : "○ OFF"}
                 </p>
               </div>
             </div>
