@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Plus,
   Trash2,
+  Pencil,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -56,6 +57,7 @@ const Dashboard = () => {
   const [filter, setFilter] = useState<Filter>("all");
   const [deviceList, setDeviceList] = useState<Device[]>(initialDevices);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingDevice, setEditingDevice] = useState<Device | null>(null);
   const navigate = useNavigate();
 
   // Form state
@@ -75,6 +77,18 @@ const Dashboard = () => {
     setFormOperations([]);
     setOpName("");
     setOpUrl("");
+    setEditingDevice(null);
+  };
+
+  const openEdit = (device: Device, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingDevice(device);
+    setFormName(device.name);
+    setFormType(device.type);
+    setFormLocation(device.location);
+    setFormSensorUrl(device.type === "sensor" ? device.apiPath : "");
+    setFormOperations(device.operations ?? []);
+    setDialogOpen(true);
   };
 
   const addOperation = () => {
@@ -90,18 +104,37 @@ const Dashboard = () => {
 
   const handleSubmit = () => {
     if (!formName.trim() || !formLocation.trim()) return;
-    const newDevice: Device = {
-      id: `device-${Date.now()}`,
-      name: formName.trim(),
-      type: formType,
-      status: "offline",
-      location: formLocation.trim(),
-      description: `${formType === "sensor" ? "Sensor" : "Switch"} – ${formLocation.trim()}`,
-      apiPath: formType === "sensor" ? formSensorUrl.trim() : "",
-      actionsPath: formType === "switch" && formOperations.length > 0 ? formOperations[0].url : undefined,
-      operations: formType === "switch" ? formOperations : undefined,
-    };
-    setDeviceList((prev) => [...prev, newDevice]);
+    if (editingDevice) {
+      setDeviceList((prev) =>
+        prev.map((d) =>
+          d.id === editingDevice.id
+            ? {
+                ...d,
+                name: formName.trim(),
+                type: formType,
+                location: formLocation.trim(),
+                description: `${formType === "sensor" ? "Sensor" : "Switch"} – ${formLocation.trim()}`,
+                apiPath: formType === "sensor" ? formSensorUrl.trim() : "",
+                actionsPath: formType === "switch" && formOperations.length > 0 ? formOperations[0].url : undefined,
+                operations: formType === "switch" ? formOperations : undefined,
+              }
+            : d
+        )
+      );
+    } else {
+      const newDevice: Device = {
+        id: `device-${Date.now()}`,
+        name: formName.trim(),
+        type: formType,
+        status: "offline",
+        location: formLocation.trim(),
+        description: `${formType === "sensor" ? "Sensor" : "Switch"} – ${formLocation.trim()}`,
+        apiPath: formType === "sensor" ? formSensorUrl.trim() : "",
+        actionsPath: formType === "switch" && formOperations.length > 0 ? formOperations[0].url : undefined,
+        operations: formType === "switch" ? formOperations : undefined,
+      };
+      setDeviceList((prev) => [...prev, newDevice]);
+    }
     resetForm();
     setDialogOpen(false);
   };
@@ -143,7 +176,7 @@ const Dashboard = () => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Add New Device</DialogTitle>
+                <DialogTitle>{editingDevice ? "Edit Device" : "Add New Device"}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 pt-2">
                 <div className="space-y-2">
@@ -197,7 +230,7 @@ const Dashboard = () => {
                 )}
 
                 <Button className="w-full" onClick={handleSubmit} disabled={!formName.trim() || !formLocation.trim()}>
-                  Add Device
+                  {editingDevice ? "Save Changes" : "Add Device"}
                 </Button>
               </div>
             </DialogContent>
@@ -246,7 +279,7 @@ const Dashboard = () => {
                   return (
                     <TableRow
                       key={device.id}
-                      className="cursor-pointer hover:bg-secondary/50 transition-colors"
+                      className="cursor-pointer group hover:bg-secondary/50 transition-colors"
                       onClick={() => navigate(`/device/${device.id}`)}
                     >
                       <TableCell className="pl-6">
@@ -279,7 +312,17 @@ const Dashboard = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={(e) => openEdit(device, e)}
+                          >
+                            <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                          </Button>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
