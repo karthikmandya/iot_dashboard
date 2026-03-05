@@ -10,6 +10,8 @@ import {
   Radio,
   Plug,
   ChevronRight,
+  Plus,
+  Trash2,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -21,7 +23,24 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { devices, Device } from "@/lib/devices";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { devices as initialDevices, Device, DeviceType, DeviceOperation } from "@/lib/devices";
 
 type Filter = "all" | "online" | "offline";
 
@@ -35,18 +54,68 @@ const iconMap: Record<string, React.ElementType> = {
 
 const Dashboard = () => {
   const [filter, setFilter] = useState<Filter>("all");
+  const [deviceList, setDeviceList] = useState<Device[]>(initialDevices);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const navigate = useNavigate();
 
-  const onlineCount = devices.filter((d) => d.status === "online").length;
-  const offlineCount = devices.filter((d) => d.status === "offline").length;
+  // Form state
+  const [formName, setFormName] = useState("");
+  const [formType, setFormType] = useState<DeviceType>("sensor");
+  const [formLocation, setFormLocation] = useState("");
+  const [formSensorUrl, setFormSensorUrl] = useState("");
+  const [formOperations, setFormOperations] = useState<DeviceOperation[]>([]);
+  const [opName, setOpName] = useState("");
+  const [opUrl, setOpUrl] = useState("");
+
+  const resetForm = () => {
+    setFormName("");
+    setFormType("sensor");
+    setFormLocation("");
+    setFormSensorUrl("");
+    setFormOperations([]);
+    setOpName("");
+    setOpUrl("");
+  };
+
+  const addOperation = () => {
+    if (!opName.trim() || !opUrl.trim()) return;
+    setFormOperations((prev) => [...prev, { name: opName.trim(), url: opUrl.trim() }]);
+    setOpName("");
+    setOpUrl("");
+  };
+
+  const removeOperation = (idx: number) => {
+    setFormOperations((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleSubmit = () => {
+    if (!formName.trim() || !formLocation.trim()) return;
+    const newDevice: Device = {
+      id: `device-${Date.now()}`,
+      name: formName.trim(),
+      type: formType,
+      status: "offline",
+      location: formLocation.trim(),
+      description: `${formType === "sensor" ? "Sensor" : "Switch"} – ${formLocation.trim()}`,
+      apiPath: formType === "sensor" ? formSensorUrl.trim() : "",
+      actionsPath: formType === "switch" && formOperations.length > 0 ? formOperations[0].url : undefined,
+      operations: formType === "switch" ? formOperations : undefined,
+    };
+    setDeviceList((prev) => [...prev, newDevice]);
+    resetForm();
+    setDialogOpen(false);
+  };
+
+  const onlineCount = deviceList.filter((d) => d.status === "online").length;
+  const offlineCount = deviceList.filter((d) => d.status === "offline").length;
 
   const filtered =
     filter === "all"
-      ? devices
-      : devices.filter((d) => d.status === filter);
+      ? deviceList
+      : deviceList.filter((d) => d.status === filter);
 
   const tiles: { label: string; value: number; filterKey: Filter; icon: React.ElementType; color: string }[] = [
-    { label: "All Devices", value: devices.length, filterKey: "all", icon: Cpu, color: "text-primary" },
+    { label: "All Devices", value: deviceList.length, filterKey: "all", icon: Cpu, color: "text-primary" },
     { label: "Online Now", value: onlineCount, filterKey: "online", icon: Wifi, color: "text-[hsl(var(--success))]" },
     { label: "Inactive", value: offlineCount, filterKey: "offline", icon: WifiOff, color: "text-muted-foreground" },
   ];
@@ -55,14 +124,84 @@ const Dashboard = () => {
     <div className="min-h-screen p-6 md:p-10">
       <div className="max-w-5xl mx-auto space-y-8">
         {/* Header */}
-        <div className="flex items-center gap-3">
-          <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Activity className="h-6 w-6 text-primary" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Activity className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight font-mono">IoT Edge Dashboard</h1>
+              <p className="text-sm text-muted-foreground">Real-time device monitoring & control</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight font-mono">IoT Edge Dashboard</h1>
-            <p className="text-sm text-muted-foreground">Real-time device monitoring & control</p>
-          </div>
+
+          <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
+            <DialogTrigger asChild>
+              <Button size="icon" className="rounded-full h-10 w-10">
+                <Plus className="h-5 w-5" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Add New Device</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 pt-2">
+                <div className="space-y-2">
+                  <Label>Name</Label>
+                  <Input placeholder="Device name" value={formName} onChange={(e) => setFormName(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Type</Label>
+                  <Select value={formType} onValueChange={(v) => { setFormType(v as DeviceType); setFormOperations([]); setFormSensorUrl(""); }}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sensor">Sensor</SelectItem>
+                      <SelectItem value="switch">Switch</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Location</Label>
+                  <Input placeholder="e.g. Lab – Zone A" value={formLocation} onChange={(e) => setFormLocation(e.target.value)} />
+                </div>
+
+                {formType === "sensor" && (
+                  <div className="space-y-2">
+                    <Label>Data URL</Label>
+                    <Input placeholder="URL to read sensor data" value={formSensorUrl} onChange={(e) => setFormSensorUrl(e.target.value)} />
+                  </div>
+                )}
+
+                {formType === "switch" && (
+                  <div className="space-y-3">
+                    <Label>Operations</Label>
+                    {formOperations.map((op, idx) => (
+                      <div key={idx} className="flex items-center gap-2 rounded-lg border border-border p-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{op.name}</p>
+                          <p className="text-xs text-muted-foreground truncate">{op.url}</p>
+                        </div>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => removeOperation(idx)}>
+                          <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                        </Button>
+                      </div>
+                    ))}
+                    <div className="space-y-2 rounded-lg border border-dashed border-border p-3">
+                      <Input placeholder="Operation name" value={opName} onChange={(e) => setOpName(e.target.value)} />
+                      <Input placeholder="Operation URL" value={opUrl} onChange={(e) => setOpUrl(e.target.value)} />
+                      <Button variant="outline" size="sm" className="w-full" onClick={addOperation} disabled={!opName.trim() || !opUrl.trim()}>
+                        <Plus className="h-3.5 w-3.5 mr-1" /> Add Operation
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                <Button className="w-full" onClick={handleSubmit} disabled={!formName.trim() || !formLocation.trim()}>
+                  Add Device
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Tiles */}

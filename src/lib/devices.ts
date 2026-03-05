@@ -1,6 +1,11 @@
 export type DeviceType = "sensor" | "switch";
 export type DeviceStatus = "online" | "offline";
 
+export interface DeviceOperation {
+  name: string;
+  url: string;
+}
+
 export interface Device {
   id: string;
   name: string;
@@ -12,6 +17,8 @@ export interface Device {
   apiPath: string;
   /** For switches: the actions sub-path */
   actionsPath?: string;
+  /** For switches: named operations */
+  operations?: DeviceOperation[];
 }
 
 export const AUTH_HEADER = "Basic " + btoa("admin:CcX1Hx?92)[6|Mym8W@b");
