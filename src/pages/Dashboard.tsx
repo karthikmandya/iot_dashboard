@@ -60,7 +60,7 @@ const Dashboard = () => {
             <Activity className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight font-mono">IoT Edge Lab</h1>
+            <h1 className="text-2xl font-bold tracking-tight font-mono">IoT Edge Dashboard</h1>
             <p className="text-sm text-muted-foreground">Real-time device monitoring & control</p>
           </div>
         </div>
