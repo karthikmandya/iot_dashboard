@@ -47,6 +47,19 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        dashboard: {
+          header: "hsl(var(--dashboard-header))",
+          nav: "hsl(var(--dashboard-nav))",
+        },
+        table: {
+          header: "hsl(var(--table-header))",
+          "row-hover": "hsl(var(--table-row-hover))",
+        },
+        status: {
+          active: "hsl(var(--status-active))",
+          warning: "hsl(var(--status-warning))",
+          error: "hsl(var(--status-error))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
