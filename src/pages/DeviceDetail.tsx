@@ -107,6 +107,40 @@ const DeviceDetail = () => {
   const [toggling, setToggling] = useState(false);
   const [brightness, setBrightness] = useState(75);
   const [colorTemp, setColorTemp] = useState(50);
+  const [zoom, setZoom] = useState(50);
+  const [cameraCoords, setCameraCoords] = useState({ x: 0, y: 0, z: 0 });
+  const [sending, setSending] = useState(false);
+
+  const sendCameraCommand = useCallback(
+    async (dx: number, dy: number, dz: number) => {
+      const newCoords = {
+        x: cameraCoords.x + dx,
+        y: cameraCoords.y + dy,
+        z: cameraCoords.z + dz,
+      };
+      setCameraCoords(newCoords);
+
+      if (!device?.controlEndpoint) {
+        toast.info(`Coordinates: X=${newCoords.x}, Y=${newCoords.y}, Z=${newCoords.z}`);
+        return;
+      }
+
+      setSending(true);
+      try {
+        await fetch(device.controlEndpoint, {
+          method: "POST",
+          headers: { ...authHeaders, "Content-Type": "application/json" },
+          body: JSON.stringify(newCoords),
+        });
+        toast.success(`Sent: X=${newCoords.x}, Y=${newCoords.y}, Z=${newCoords.z}`);
+      } catch {
+        toast.error("Failed to send camera command");
+      } finally {
+        setSending(false);
+      }
+    },
+    [cameraCoords, device?.controlEndpoint]
+  );
 
   const sensorHistory = useMemo(
     () => (device?.type === "sensor" ? generateSensorHistory(device.id) : []),
