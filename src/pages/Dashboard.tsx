@@ -13,6 +13,7 @@ import {
   Plus,
   Trash2,
   Pencil,
+  Camera,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -44,6 +45,13 @@ import {
 import { devices as initialDevices, Device, DeviceType, DeviceOperation } from "@/lib/devices";
 
 type Filter = "all" | "online" | "offline";
+
+const typeIconMap: Record<DeviceType, React.ElementType> = {
+  sensor: Thermometer,
+  switch: Plug,
+  bulb: Lightbulb,
+  camera: Camera,
+};
 
 const iconMap: Record<string, React.ElementType> = {
   "temp-sensor-1": Thermometer,
@@ -113,7 +121,7 @@ const Dashboard = () => {
                 name: formName.trim(),
                 type: formType,
                 location: formLocation.trim(),
-                description: `${formType === "sensor" ? "Sensor" : "Switch"} – ${formLocation.trim()}`,
+                description: `${formType.charAt(0).toUpperCase() + formType.slice(1)} – ${formLocation.trim()}`,
                 apiPath: formType === "sensor" ? formSensorUrl.trim() : "",
                 actionsPath: formType === "switch" && formOperations.length > 0 ? formOperations[0].url : undefined,
                 operations: formType === "switch" ? formOperations : undefined,
@@ -128,7 +136,7 @@ const Dashboard = () => {
         type: formType,
         status: "offline",
         location: formLocation.trim(),
-        description: `${formType === "sensor" ? "Sensor" : "Switch"} – ${formLocation.trim()}`,
+        description: `${formType.charAt(0).toUpperCase() + formType.slice(1)} – ${formLocation.trim()}`,
         apiPath: formType === "sensor" ? formSensorUrl.trim() : "",
         actionsPath: formType === "switch" && formOperations.length > 0 ? formOperations[0].url : undefined,
         operations: formType === "switch" ? formOperations : undefined,
@@ -190,6 +198,8 @@ const Dashboard = () => {
                     <SelectContent>
                       <SelectItem value="sensor">Sensor</SelectItem>
                       <SelectItem value="switch">Switch</SelectItem>
+                      <SelectItem value="bulb">Bulb</SelectItem>
+                      <SelectItem value="camera">Camera</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -275,7 +285,7 @@ const Dashboard = () => {
               </TableHeader>
               <TableBody>
                 {filtered.map((device) => {
-                  const Icon = iconMap[device.id] || Cpu;
+                  const Icon = iconMap[device.id] || typeIconMap[device.type] || Cpu;
                   return (
                     <TableRow
                       key={device.id}

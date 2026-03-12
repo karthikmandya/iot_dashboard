@@ -9,9 +9,13 @@ import {
   Lightbulb,
   Radio,
   Plug,
+  Camera,
+  Sun,
+  SunDim,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -29,6 +33,13 @@ import {
   Cell,
   ReferenceLine,
 } from "recharts";
+
+const typeIconMap: Record<string, React.ElementType> = {
+  sensor: Thermometer,
+  switch: Plug,
+  bulb: Lightbulb,
+  camera: Camera,
+};
 
 const iconMap: Record<string, React.ElementType> = {
   "temp-sensor-1": Thermometer,
@@ -87,6 +98,8 @@ const DeviceDetail = () => {
   const [loading, setLoading] = useState(false);
   const [deviceOn, setDeviceOn] = useState(false);
   const [toggling, setToggling] = useState(false);
+  const [brightness, setBrightness] = useState(75);
+  const [colorTemp, setColorTemp] = useState(50);
 
   const sensorHistory = useMemo(
     () => (device?.type === "sensor" ? generateSensorHistory(device.id) : []),
@@ -111,7 +124,7 @@ const DeviceDetail = () => {
     );
   }
 
-  const Icon = iconMap[device.id] || Activity;
+  const Icon = iconMap[device.id] || typeIconMap[device.type] || Activity;
   const hasApi = !!device.apiPath;
 
   const readSensor = async () => {
@@ -348,6 +361,106 @@ const DeviceDetail = () => {
               </CardContent>
             </Card>
           </>
+        )}
+
+        {/* Bulb Control */}
+        {device.type === "bulb" && (
+          <>
+            <Card>
+              <CardContent className="flex items-center justify-between pt-6">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`h-10 w-10 rounded-lg flex items-center justify-center transition-colors ${
+                      deviceOn ? "bg-primary/15" : "bg-secondary"
+                    }`}
+                  >
+                    <Power className={`h-5 w-5 transition-colors ${deviceOn ? "text-primary" : "text-muted-foreground"}`} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Power Control</p>
+                    <p className={`text-xs font-mono ${deviceOn ? "text-[hsl(var(--success))]" : "text-muted-foreground"}`}>
+                      {deviceOn ? "● ON" : "○ OFF"}
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={deviceOn}
+                  onCheckedChange={(on) => setDeviceOn(on)}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base font-medium">Brightness</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <SunDim className="h-5 w-5 text-muted-foreground shrink-0" />
+                  <Slider
+                    value={[brightness]}
+                    onValueChange={(v) => setBrightness(v[0])}
+                    min={0}
+                    max={100}
+                    step={1}
+                    className="flex-1"
+                  />
+                  <Sun className="h-5 w-5 text-primary shrink-0" />
+                </div>
+                <p className="text-center text-sm font-mono font-medium">{brightness}%</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base font-medium">Color Temperature</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <span className="text-xs font-medium text-amber-500 shrink-0">Warm</span>
+                  <div className="flex-1 relative">
+                    <div
+                      className="absolute inset-0 rounded-full h-2 top-1/2 -translate-y-1/2"
+                      style={{
+                        background: "linear-gradient(to right, #f59e0b, #fbbf24, #fde68a, #e0f2fe, #bae6fd, #7dd3fc)",
+                      }}
+                    />
+                    <Slider
+                      value={[colorTemp]}
+                      onValueChange={(v) => setColorTemp(v[0])}
+                      min={0}
+                      max={100}
+                      step={1}
+                      className="relative"
+                    />
+                  </div>
+                  <span className="text-xs font-medium text-sky-400 shrink-0">Cool</span>
+                </div>
+                <p className="text-center text-sm font-mono font-medium">
+                  {colorTemp < 33 ? "Warm White" : colorTemp < 66 ? "Neutral White" : "Cool Daylight"}
+                </p>
+              </CardContent>
+            </Card>
+          </>
+        )}
+
+        {/* Camera View */}
+        {device.type === "camera" && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base font-medium">Live Feed</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="aspect-video rounded-lg bg-secondary flex items-center justify-center">
+                <div className="text-center space-y-2">
+                  <Camera className="h-10 w-10 text-muted-foreground mx-auto" />
+                  <p className="text-sm text-muted-foreground">
+                    {device.status === "online" ? "Camera feed not configured" : "Camera is offline"}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>
