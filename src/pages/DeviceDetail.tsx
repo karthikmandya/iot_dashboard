@@ -485,23 +485,132 @@ const DeviceDetail = () => {
           </>
         )}
 
-        {/* Camera View */}
+        {/* Camera Control */}
         {device.type === "camera" && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base font-medium">Live Feed</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="aspect-video rounded-lg bg-secondary flex items-center justify-center">
-                <div className="text-center space-y-2">
-                  <Camera className="h-10 w-10 text-muted-foreground mx-auto" />
+          <>
+            {/* Live Stream Link */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base font-medium">Live Stream</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {device.streamUrl ? (
+                  <a
+                    href={device.streamUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-primary hover:underline"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Open Live Stream
+                  </a>
+                ) : (
                   <p className="text-sm text-muted-foreground">
-                    {device.status === "online" ? "Camera feed not configured" : "Camera is offline"}
+                    No stream URL configured. Edit this device to add one.
                   </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* PTZ D-Pad Controller */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base font-medium">Camera PTZ Control</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-start gap-8 justify-center">
+                  {/* D-Pad */}
+                  <div className="flex flex-col items-center gap-1">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-12 w-12 rounded-lg"
+                      disabled={sending}
+                      onClick={() => sendCameraCommand(0, 1, 0)}
+                    >
+                      <ChevronUp className="h-6 w-6" />
+                    </Button>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-12 w-12 rounded-lg"
+                        disabled={sending}
+                        onClick={() => sendCameraCommand(-1, 0, 0)}
+                      >
+                        <ChevronLeft className="h-6 w-6" />
+                      </Button>
+                      <div className="h-12 w-12 rounded-lg bg-secondary flex items-center justify-center">
+                        <Camera className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-12 w-12 rounded-lg"
+                        disabled={sending}
+                        onClick={() => sendCameraCommand(1, 0, 0)}
+                      >
+                        <ChevronRight className="h-6 w-6" />
+                      </Button>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-12 w-12 rounded-lg"
+                      disabled={sending}
+                      onClick={() => sendCameraCommand(0, -1, 0)}
+                    >
+                      <ChevronDown className="h-6 w-6" />
+                    </Button>
+                  </div>
+
+                  {/* Zoom Slider (vertical) */}
+                  <div className="flex flex-col items-center gap-3 pt-1">
+                    <ZoomIn className="h-4 w-4 text-primary shrink-0" />
+                    <div className="h-[140px] flex items-center">
+                      <Slider
+                        orientation="vertical"
+                        value={[zoom]}
+                        onValueChange={(v) => {
+                          const dz = v[0] - zoom;
+                          setZoom(v[0]);
+                          sendCameraCommand(0, 0, dz);
+                        }}
+                        min={0}
+                        max={100}
+                        step={5}
+                        className="h-full"
+                      />
+                    </div>
+                    <ZoomOut className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <p className="text-xs font-mono text-muted-foreground">{zoom}%</p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+
+                {/* Coordinates Display */}
+                <div className="flex justify-center gap-6">
+                  <div className="text-center">
+                    <p className="text-xs text-muted-foreground">X</p>
+                    <p className="text-sm font-mono font-bold">{cameraCoords.x}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-muted-foreground">Y</p>
+                    <p className="text-sm font-mono font-bold">{cameraCoords.y}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-muted-foreground">Z</p>
+                    <p className="text-sm font-mono font-bold">{cameraCoords.z}</p>
+                  </div>
+                </div>
+
+                {device.controlEndpoint && (
+                  <p className="text-xs text-muted-foreground text-center">
+                    Endpoint: {device.controlEndpoint}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </>
         )}
       </div>
     </div>

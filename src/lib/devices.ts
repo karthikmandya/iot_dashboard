@@ -92,7 +92,9 @@ export const devices: Device[] = [
     type: "camera",
     status: "online",
     location: "Lab – Entrance",
-    description: "HD security camera with motion detection",
+    description: "HD security camera with PTZ control",
     apiPath: "",
+    streamUrl: "",
+    controlEndpoint: "/api/bosch/camera/ptz",
   },
 ];
