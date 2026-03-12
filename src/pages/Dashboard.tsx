@@ -76,6 +76,8 @@ const Dashboard = () => {
   const [formOperations, setFormOperations] = useState<DeviceOperation[]>([]);
   const [opName, setOpName] = useState("");
   const [opUrl, setOpUrl] = useState("");
+  const [formStreamUrl, setFormStreamUrl] = useState("");
+  const [formControlEndpoint, setFormControlEndpoint] = useState("");
 
   const resetForm = () => {
     setFormName("");
