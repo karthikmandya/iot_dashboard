@@ -1,4 +1,4 @@
-export type DeviceType = "sensor" | "switch";
+export type DeviceType = "sensor" | "switch" | "bulb" | "camera";
 export type DeviceStatus = "online" | "offline";
 
 export interface DeviceOperation {

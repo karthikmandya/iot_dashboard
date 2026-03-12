@@ -136,7 +136,7 @@ const Dashboard = () => {
         type: formType,
         status: "offline",
         location: formLocation.trim(),
-        description: `${formType === "sensor" ? "Sensor" : "Switch"} – ${formLocation.trim()}`,
+        description: `${formType.charAt(0).toUpperCase() + formType.slice(1)} – ${formLocation.trim()}`,
         apiPath: formType === "sensor" ? formSensorUrl.trim() : "",
         actionsPath: formType === "switch" && formOperations.length > 0 ? formOperations[0].url : undefined,
         operations: formType === "switch" ? formOperations : undefined,
