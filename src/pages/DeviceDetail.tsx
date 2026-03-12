@@ -98,6 +98,8 @@ const DeviceDetail = () => {
   const [loading, setLoading] = useState(false);
   const [deviceOn, setDeviceOn] = useState(false);
   const [toggling, setToggling] = useState(false);
+  const [brightness, setBrightness] = useState(75);
+  const [colorTemp, setColorTemp] = useState(50);
 
   const sensorHistory = useMemo(
     () => (device?.type === "sensor" ? generateSensorHistory(device.id) : []),
