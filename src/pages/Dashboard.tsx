@@ -285,7 +285,7 @@ const Dashboard = () => {
               </TableHeader>
               <TableBody>
                 {filtered.map((device) => {
-                  const Icon = iconMap[device.id] || Cpu;
+                  const Icon = iconMap[device.id] || typeIconMap[device.type] || Cpu;
                   return (
                     <TableRow
                       key={device.id}
