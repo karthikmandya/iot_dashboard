@@ -46,6 +46,13 @@ import { devices as initialDevices, Device, DeviceType, DeviceOperation } from "
 
 type Filter = "all" | "online" | "offline";
 
+const typeIconMap: Record<DeviceType, React.ElementType> = {
+  sensor: Thermometer,
+  switch: Plug,
+  bulb: Lightbulb,
+  camera: Camera,
+};
+
 const iconMap: Record<string, React.ElementType> = {
   "temp-sensor-1": Thermometer,
   "zigbee-bulb-1": Lightbulb,
