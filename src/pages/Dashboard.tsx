@@ -249,6 +249,19 @@ const Dashboard = () => {
                   </div>
                 )}
 
+                {formType === "camera" && (
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <Label>Stream URL</Label>
+                      <Input placeholder="Live stream URL" value={formStreamUrl} onChange={(e) => setFormStreamUrl(e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Control Endpoint</Label>
+                      <Input placeholder="PTZ control API endpoint" value={formControlEndpoint} onChange={(e) => setFormControlEndpoint(e.target.value)} />
+                    </div>
+                  </div>
+                )}
+
                 <Button className="w-full" onClick={handleSubmit} disabled={!formName.trim() || !formLocation.trim()}>
                   {editingDevice ? "Save Changes" : "Add Device"}
                 </Button>
