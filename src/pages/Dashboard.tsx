@@ -87,6 +87,8 @@ const Dashboard = () => {
     setFormOperations([]);
     setOpName("");
     setOpUrl("");
+    setFormStreamUrl("");
+    setFormControlEndpoint("");
     setEditingDevice(null);
   };
 
@@ -98,6 +100,8 @@ const Dashboard = () => {
     setFormLocation(device.location);
     setFormSensorUrl(device.type === "sensor" ? device.apiPath : "");
     setFormOperations(device.operations ?? []);
+    setFormStreamUrl(device.streamUrl ?? "");
+    setFormControlEndpoint(device.controlEndpoint ?? "");
     setDialogOpen(true);
   };
 
