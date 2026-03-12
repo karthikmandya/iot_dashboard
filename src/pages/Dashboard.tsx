@@ -13,6 +13,7 @@ import {
   Plus,
   Trash2,
   Pencil,
+  Camera,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
