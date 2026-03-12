@@ -198,6 +198,8 @@ const Dashboard = () => {
                     <SelectContent>
                       <SelectItem value="sensor">Sensor</SelectItem>
                       <SelectItem value="switch">Switch</SelectItem>
+                      <SelectItem value="bulb">Bulb</SelectItem>
+                      <SelectItem value="camera">Camera</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
