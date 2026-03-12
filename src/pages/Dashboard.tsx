@@ -148,6 +148,8 @@ const Dashboard = () => {
         apiPath: formType === "sensor" ? formSensorUrl.trim() : "",
         actionsPath: formType === "switch" && formOperations.length > 0 ? formOperations[0].url : undefined,
         operations: formType === "switch" ? formOperations : undefined,
+        streamUrl: formType === "camera" ? formStreamUrl.trim() : undefined,
+        controlEndpoint: formType === "camera" ? formControlEndpoint.trim() : undefined,
       };
       setDeviceList((prev) => [...prev, newDevice]);
     }
