@@ -73,4 +73,22 @@ export const devices: Device[] = [
     description: "Controllable smart power plug",
     apiPath: "",
   },
+  {
+    id: "smart-bulb-1",
+    name: "Living Room Bulb",
+    type: "bulb",
+    status: "online",
+    location: "Lab – Zone B",
+    description: "Smart RGB bulb with brightness and color temperature control",
+    apiPath: "",
+  },
+  {
+    id: "security-cam-1",
+    name: "Entrance Camera",
+    type: "camera",
+    status: "online",
+    location: "Lab – Entrance",
+    description: "HD security camera with motion detection",
+    apiPath: "",
+  },
 ];
