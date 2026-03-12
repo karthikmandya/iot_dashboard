@@ -76,6 +76,8 @@ const Dashboard = () => {
   const [formOperations, setFormOperations] = useState<DeviceOperation[]>([]);
   const [opName, setOpName] = useState("");
   const [opUrl, setOpUrl] = useState("");
+  const [formStreamUrl, setFormStreamUrl] = useState("");
+  const [formControlEndpoint, setFormControlEndpoint] = useState("");
 
   const resetForm = () => {
     setFormName("");
@@ -85,6 +87,8 @@ const Dashboard = () => {
     setFormOperations([]);
     setOpName("");
     setOpUrl("");
+    setFormStreamUrl("");
+    setFormControlEndpoint("");
     setEditingDevice(null);
   };
 
@@ -96,6 +100,8 @@ const Dashboard = () => {
     setFormLocation(device.location);
     setFormSensorUrl(device.type === "sensor" ? device.apiPath : "");
     setFormOperations(device.operations ?? []);
+    setFormStreamUrl(device.streamUrl ?? "");
+    setFormControlEndpoint(device.controlEndpoint ?? "");
     setDialogOpen(true);
   };
 
@@ -125,6 +131,8 @@ const Dashboard = () => {
                 apiPath: formType === "sensor" ? formSensorUrl.trim() : "",
                 actionsPath: formType === "switch" && formOperations.length > 0 ? formOperations[0].url : undefined,
                 operations: formType === "switch" ? formOperations : undefined,
+                streamUrl: formType === "camera" ? formStreamUrl.trim() : undefined,
+                controlEndpoint: formType === "camera" ? formControlEndpoint.trim() : undefined,
               }
             : d
         )
@@ -140,6 +148,8 @@ const Dashboard = () => {
         apiPath: formType === "sensor" ? formSensorUrl.trim() : "",
         actionsPath: formType === "switch" && formOperations.length > 0 ? formOperations[0].url : undefined,
         operations: formType === "switch" ? formOperations : undefined,
+        streamUrl: formType === "camera" ? formStreamUrl.trim() : undefined,
+        controlEndpoint: formType === "camera" ? formControlEndpoint.trim() : undefined,
       };
       setDeviceList((prev) => [...prev, newDevice]);
     }
@@ -235,6 +245,19 @@ const Dashboard = () => {
                       <Button variant="outline" size="sm" className="w-full" onClick={addOperation} disabled={!opName.trim() || !opUrl.trim()}>
                         <Plus className="h-3.5 w-3.5 mr-1" /> Add Operation
                       </Button>
+                    </div>
+                  </div>
+                )}
+
+                {formType === "camera" && (
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <Label>Stream URL</Label>
+                      <Input placeholder="Live stream URL" value={formStreamUrl} onChange={(e) => setFormStreamUrl(e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Control Endpoint</Label>
+                      <Input placeholder="PTZ control API endpoint" value={formControlEndpoint} onChange={(e) => setFormControlEndpoint(e.target.value)} />
                     </div>
                   </div>
                 )}

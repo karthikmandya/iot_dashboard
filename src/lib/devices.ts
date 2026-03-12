@@ -19,6 +19,10 @@ export interface Device {
   actionsPath?: string;
   /** For switches: named operations */
   operations?: DeviceOperation[];
+  /** For cameras: live stream URL */
+  streamUrl?: string;
+  /** For cameras: PTZ control endpoint */
+  controlEndpoint?: string;
 }
 
 export const AUTH_HEADER = "Basic " + btoa("admin:CcX1Hx?92)[6|Mym8W@b");
@@ -88,7 +92,9 @@ export const devices: Device[] = [
     type: "camera",
     status: "online",
     location: "Lab – Entrance",
-    description: "HD security camera with motion detection",
+    description: "HD security camera with PTZ control",
     apiPath: "",
+    streamUrl: "",
+    controlEndpoint: "/api/bosch/camera/ptz",
   },
 ];
