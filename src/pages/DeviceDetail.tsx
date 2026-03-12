@@ -124,7 +124,7 @@ const DeviceDetail = () => {
     );
   }
 
-  const Icon = iconMap[device.id] || Activity;
+  const Icon = iconMap[device.id] || typeIconMap[device.type] || Activity;
   const hasApi = !!device.apiPath;
 
   const readSensor = async () => {
