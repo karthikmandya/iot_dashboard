@@ -89,6 +89,10 @@ export const devices: Device[] = [
     location: "Lab – Zone B",
     description: "Smart RGB bulb with brightness and color temperature control",
     apiPath: "",
+    brightnessEndpoint:
+      "/api/bosch/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.TransitionActuator/da:item:ZigBee:001788010eb1c51f%2311%233:TransitionActuator/actions/start",
+    colorTempEndpoint:
+      "/api/bosch/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.TransitionActuator/da:item:ZigBee:001788010eb1c51f%2311%235:TransitionActuator/actions/start",
   },
   {
     id: "security-cam-1",
