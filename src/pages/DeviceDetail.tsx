@@ -441,14 +441,35 @@ const DeviceDetail = () => {
                   <Slider
                     value={[brightness]}
                     onValueChange={(v) => setBrightness(v[0])}
+                    onValueCommit={async (v) => {
+                      if (!device.brightnessEndpoint) return;
+                      try {
+                        await fetch(device.brightnessEndpoint, {
+                          method: "POST",
+                          headers: { ...authHeaders, "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            arguments: {
+                              "Argument 1": {
+                                unit: { symbol: "1", systemName: "SI" },
+                                value: { value: String(v[0]) },
+                              },
+                              "Argument 2": 1000,
+                            },
+                          }),
+                        });
+                        toast.success(`Brightness set to ${Math.round((v[0] / 254) * 100)}%`);
+                      } catch {
+                        toast.error("Failed to set brightness");
+                      }
+                    }}
                     min={0}
-                    max={100}
+                    max={254}
                     step={1}
                     className="flex-1"
                   />
                   <Sun className="h-5 w-5 text-primary shrink-0" />
                 </div>
-                <p className="text-center text-sm font-mono font-medium">{brightness}%</p>
+                <p className="text-center text-sm font-mono font-medium">{Math.round((brightness / 254) * 100)}%</p>
               </CardContent>
             </Card>
 
@@ -469,8 +490,29 @@ const DeviceDetail = () => {
                     <Slider
                       value={[colorTemp]}
                       onValueChange={(v) => setColorTemp(v[0])}
-                      min={0}
-                      max={100}
+                      onValueCommit={async (v) => {
+                        if (!device.colorTempEndpoint) return;
+                        try {
+                          await fetch(device.colorTempEndpoint, {
+                            method: "POST",
+                            headers: { ...authHeaders, "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              arguments: {
+                                "Argument 1": {
+                                  unit: { symbol: "K", systemName: "SI" },
+                                  value: { value: String(v[0]) },
+                                },
+                                "Argument 2": 1000,
+                              },
+                            }),
+                          });
+                          toast.success(`Color temperature set to ${v[0]}K`);
+                        } catch {
+                          toast.error("Failed to set color temperature");
+                        }
+                      }}
+                      min={2000}
+                      max={6535}
                       step={1}
                       className="relative"
                     />
@@ -478,7 +520,7 @@ const DeviceDetail = () => {
                   <span className="text-xs font-medium text-sky-400 shrink-0">Cool</span>
                 </div>
                 <p className="text-center text-sm font-mono font-medium">
-                  {colorTemp < 33 ? "Warm White" : colorTemp < 66 ? "Neutral White" : "Cool Daylight"}
+                  {colorTemp}K – {colorTemp < 3500 ? "Warm White" : colorTemp < 5000 ? "Neutral White" : "Cool Daylight"}
                 </p>
               </CardContent>
             </Card>
