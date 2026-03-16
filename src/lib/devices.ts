@@ -23,6 +23,10 @@ export interface Device {
   streamUrl?: string;
   /** For cameras: PTZ control endpoint */
   controlEndpoint?: string;
+  /** For bulbs: brightness control endpoint */
+  brightnessEndpoint?: string;
+  /** For bulbs: color temperature control endpoint */
+  colorTempEndpoint?: string;
 }
 
 export const AUTH_HEADER = "Basic " + btoa("admin:CcX1Hx?92)[6|Mym8W@b");
