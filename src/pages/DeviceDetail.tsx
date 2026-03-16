@@ -105,8 +105,8 @@ const DeviceDetail = () => {
   const [loading, setLoading] = useState(false);
   const [deviceOn, setDeviceOn] = useState(false);
   const [toggling, setToggling] = useState(false);
-  const [brightness, setBrightness] = useState(75);
-  const [colorTemp, setColorTemp] = useState(50);
+  const [brightness, setBrightness] = useState(127);
+  const [colorTemp, setColorTemp] = useState(4000);
   const [zoom, setZoom] = useState(50);
   const [cameraCoords, setCameraCoords] = useState({ x: 0, y: 0, z: 0 });
   const [sending, setSending] = useState(false);
