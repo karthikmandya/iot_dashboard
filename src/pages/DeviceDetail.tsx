@@ -537,15 +537,24 @@ const DeviceDetail = () => {
               </CardHeader>
               <CardContent>
                 {device.streamUrl ? (
-                  <a
-                    href={device.streamUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-primary hover:underline"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    Open Live Stream
-                  </a>
+                  <div className="space-y-3">
+                    <div className="relative w-full rounded-lg overflow-hidden bg-black aspect-video">
+                      <img
+                        src={device.streamUrl}
+                        alt={`${device.name} live stream`}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <a
+                      href={device.streamUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      Open in new tab
+                    </a>
+                  </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">
                     No stream URL configured. Edit this device to add one.
