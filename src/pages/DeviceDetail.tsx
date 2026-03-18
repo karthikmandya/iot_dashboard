@@ -295,6 +295,18 @@ const DeviceDetail = () => {
                   <p className="text-sm text-muted-foreground text-center py-6">
                     This sensor is not connected to a live API endpoint
                   </p>
+                ) : device.sensorEndpoints && multiSensorData ? (
+                  <div className="flex justify-center gap-4 flex-wrap">
+                    {device.sensorEndpoints.map((ep) => (
+                      <div key={ep.label} className="rounded-lg bg-secondary/50 p-4 text-center min-w-[120px]">
+                        <Activity className="h-5 w-5 text-primary mx-auto mb-1" />
+                        <p className="text-xs text-muted-foreground">{ep.label}</p>
+                        <p className="text-lg font-mono font-bold mt-0.5">
+                          {multiSensorData[ep.label] ?? "–"} {ep.unit}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 ) : sensorData ? (
                   <div className="flex justify-center">
                     <div className="rounded-lg bg-secondary/50 p-4 text-center min-w-[120px]">
