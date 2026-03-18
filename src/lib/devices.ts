@@ -122,4 +122,25 @@ export const devices: Device[] = [
     streamUrl: "https://DUMMYURL/DUMMYPATH",
     controlEndpoint: "/api/bosch/camera/ptz",
   },
+  {
+    id: "modbus-sensor-1",
+    name: "Modbus",
+    type: "sensor",
+    status: "online",
+    location: "Lab – Zone A",
+    description: "Modbus sensor providing current and voltage readings",
+    apiPath: "multi",
+    sensorEndpoints: [
+      {
+        label: "Current",
+        url: "http://10.189.230.81:8080/modbus/links/1/input-registers/swapped-float?offset=22",
+        unit: "A",
+      },
+      {
+        label: "Voltage",
+        url: "http://10.189.230.81:8080/modbus/links/1/input-registers/swapped-float?offset=20",
+        unit: "V",
+      },
+    ],
+  },
 ];
