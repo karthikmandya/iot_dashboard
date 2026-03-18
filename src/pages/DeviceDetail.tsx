@@ -426,7 +426,8 @@ const DeviceDetail = () => {
                 </div>
                 <Switch
                   checked={deviceOn}
-                  onCheckedChange={(on) => setDeviceOn(on)}
+                  onCheckedChange={toggleDevice}
+                  disabled={toggling || !hasApi}
                 />
               </CardContent>
             </Card>

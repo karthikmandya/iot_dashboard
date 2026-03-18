@@ -43,7 +43,7 @@ export const devices: Device[] = [
     apiPath:
       "/api/bosch/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Sensor/da%3Aitem%3AZigBee%3A286d97000115b3b3%231%233%3ASensor/state-vars/value",
   },
-  {
+ /* {
     id: "zigbee-bulb-1",
     name: "Zigbee Bulb",
     type: "switch",
@@ -52,8 +52,13 @@ export const devices: Device[] = [
     description: "ZigBee smart bulb for lab lighting control",
     apiPath:
       "/api/bosch/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Switch/da:item:ZigBee:001788010eb1c51f%2311%232:Switch/actions",
-    actionsPath: "/api/bosch/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Switch/da:item:ZigBee:001788010eb1c51f%2311%232:Switch/actions",
-  },
+    actionsPath: 
+      "/api/bosch/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Switch/da:item:ZigBee:001788010eb1c51f%2311%232:Switch/actions",
+    brightnessEndpoint:
+      "/api/bosch/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.TransitionActuator/da:item:ZigBee:001788010eb1c51f%2311%233:TransitionActuator/actions/start",
+    colorTempEndpoint:
+      "/api/bosch/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.TransitionActuator/da:item:ZigBee:001788010eb1c51f%2311%235:TransitionActuator/actions/start",
+  },*/
   {
     id: "humidity-sensor-1",
     name: "Humidity Sensor",
@@ -83,12 +88,14 @@ export const devices: Device[] = [
   },
   {
     id: "smart-bulb-1",
-    name: "Living Room Bulb",
+    name: "Zigbee Bulb",
     type: "bulb",
     status: "online",
     location: "Lab – Zone B",
     description: "Smart RGB bulb with brightness and color temperature control",
-    apiPath: "",
+    apiPath:
+      "/api/bosch/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Switch/da:item:ZigBee:001788010eb1c51f%2311%232:Switch/actions",
+    actionsPath: "/api/bosch/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.Switch/da:item:ZigBee:001788010eb1c51f%2311%232:Switch/actions",
     brightnessEndpoint:
       "/api/bosch/rs/gdm/devices/mprm.osgi.device/remote.manager.controlled/components/mprm.osgi.fi.com.prosyst.mbs.services.da.items.TransitionActuator/da:item:ZigBee:001788010eb1c51f%2311%233:TransitionActuator/actions/start",
     colorTempEndpoint:
@@ -96,7 +103,7 @@ export const devices: Device[] = [
   },
   {
     id: "security-cam-1",
-    name: "Entrance Camera",
+    name: "Bosch AUTODOME Camera",
     type: "camera",
     status: "online",
     location: "Lab – Entrance",
