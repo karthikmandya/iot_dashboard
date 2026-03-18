@@ -103,6 +103,7 @@ const DeviceDetail = () => {
   const device = devices.find((d) => d.id === deviceId);
 
   const [sensorData, setSensorData] = useState<SensorData | null>(null);
+  const [multiSensorData, setMultiSensorData] = useState<Record<string, string> | null>(null);
   const [loading, setLoading] = useState(false);
   const [deviceOn, setDeviceOn] = useState(false);
   const [toggling, setToggling] = useState(false);
