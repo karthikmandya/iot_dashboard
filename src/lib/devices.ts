@@ -10,9 +10,13 @@ export interface SensorEndpoint {
   label: string;
   url: string;
   unit: string;
+  /** Optional Basic Auth header for this endpoint */
+  authHeader?: string;
   /** JSON path segments to extract the numeric value from the response */
   valuePath?: string[];
 }
+
+export const MODBUS_AUTH_HEADER = "Basic " + btoa("admin:admin");
 
 export interface Device {
   id: string;
@@ -135,11 +139,13 @@ export const devices: Device[] = [
         label: "Current",
         url: "http://10.189.230.81:8080/modbus/links/1/input-registers/swapped-float?offset=22",
         unit: "A",
+        authHeader: MODBUS_AUTH_HEADER,
       },
       {
         label: "Voltage",
         url: "http://10.189.230.81:8080/modbus/links/1/input-registers/swapped-float?offset=20",
         unit: "V",
+        authHeader: MODBUS_AUTH_HEADER,
       },
     ],
   },
