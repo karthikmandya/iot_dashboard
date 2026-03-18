@@ -176,21 +176,18 @@ const DeviceDetail = () => {
       setLoading(true);
       try {
         const results: Record<string, string> = {};
-        await Promise.all(
-          device.sensorEndpoints.map(async (ep) => {
-            const headers: Record<string, string> = {};
-            if (ep.authHeader) headers["Authorization"] = ep.authHeader;
-            const res = await fetch(ep.url, { headers });
-            const data = await res.json();
-            // Try to extract a simple numeric value; fall back to JSON stringify
-            const val = typeof data === "number" || typeof data === "string"
-              ? String(data)
-              : data?.value !== undefined
-                ? String(data.value)
-                : JSON.stringify(data);
-            results[ep.label] = val;
-          })
-        );
+        for (const ep of device.sensorEndpoints) {
+          const headers: Record<string, string> = {};
+          if (ep.authHeader) headers["Authorization"] = ep.authHeader;
+          const res = await fetch(ep.url, { headers });
+          const data = await res.json();
+          const val = typeof data === "number" || typeof data === "string"
+            ? String(data)
+            : data?.value !== undefined
+              ? String(data.value)
+              : JSON.stringify(data);
+          results[ep.label] = val;
+        }
         setMultiSensorData(results);
         toast.success("Sensor data updated");
       } catch {
