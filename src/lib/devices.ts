@@ -137,7 +137,7 @@ export const devices: Device[] = [
     sensorEndpoints: [
       {
         label: "Current",
-        url: "http://10.189.230.81:8080/modbus/links/1/input-registers/swapped-float?offset=22",
+        url: "/api/modbus/modbus/links/1/input-registers/swapped-float?offset=22",
         unit: "A",
         authHeader: MODBUS_AUTH_HEADER,
       },
