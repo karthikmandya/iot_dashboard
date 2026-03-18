@@ -10,9 +10,13 @@ export interface SensorEndpoint {
   label: string;
   url: string;
   unit: string;
+  /** Optional Basic Auth header for this endpoint */
+  authHeader?: string;
   /** JSON path segments to extract the numeric value from the response */
   valuePath?: string[];
 }
+
+export const MODBUS_AUTH_HEADER = "Basic " + btoa("admin:admin");
 
 export interface Device {
   id: string;
