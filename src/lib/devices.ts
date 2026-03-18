@@ -6,6 +6,14 @@ export interface DeviceOperation {
   url: string;
 }
 
+export interface SensorEndpoint {
+  label: string;
+  url: string;
+  unit: string;
+  /** JSON path segments to extract the numeric value from the response */
+  valuePath?: string[];
+}
+
 export interface Device {
   id: string;
   name: string;
@@ -15,6 +23,8 @@ export interface Device {
   description: string;
   /** API path fragment used to build the full URL */
   apiPath: string;
+  /** For sensors with multiple readings */
+  sensorEndpoints?: SensorEndpoint[];
   /** For switches: the actions sub-path */
   actionsPath?: string;
   /** For switches: named operations */
@@ -111,5 +121,26 @@ export const devices: Device[] = [
     apiPath: "",
     streamUrl: "https://DUMMYURL/DUMMYPATH",
     controlEndpoint: "/api/bosch/camera/ptz",
+  },
+  {
+    id: "modbus-sensor-1",
+    name: "Modbus",
+    type: "sensor",
+    status: "online",
+    location: "Lab – Zone A",
+    description: "Modbus sensor providing current and voltage readings",
+    apiPath: "multi",
+    sensorEndpoints: [
+      {
+        label: "Current",
+        url: "http://10.189.230.81:8080/modbus/links/1/input-registers/swapped-float?offset=22",
+        unit: "A",
+      },
+      {
+        label: "Voltage",
+        url: "http://10.189.230.81:8080/modbus/links/1/input-registers/swapped-float?offset=20",
+        unit: "V",
+      },
+    ],
   },
 ];

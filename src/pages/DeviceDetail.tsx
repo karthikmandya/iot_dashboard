@@ -26,7 +26,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { devices, authHeaders } from "@/lib/devices";
+import { devices, authHeaders, type SensorEndpoint } from "@/lib/devices";
 import {
   LineChart,
   Line,
@@ -54,6 +54,7 @@ const iconMap: Record<string, React.ElementType> = {
   "humidity-sensor-1": Activity,
   "motion-sensor-1": Radio,
   "smart-plug-1": Plug,
+  "modbus-sensor-1": Activity,
 };
 
 interface SensorData {
@@ -102,6 +103,7 @@ const DeviceDetail = () => {
   const device = devices.find((d) => d.id === deviceId);
 
   const [sensorData, setSensorData] = useState<SensorData | null>(null);
+  const [multiSensorData, setMultiSensorData] = useState<Record<string, string> | null>(null);
   const [loading, setLoading] = useState(false);
   const [deviceOn, setDeviceOn] = useState(false);
   const [toggling, setToggling] = useState(false);
@@ -169,6 +171,34 @@ const DeviceDetail = () => {
   const hasApi = !!device.apiPath;
 
   const readSensor = async () => {
+    // Multi-endpoint sensor (e.g. Modbus)
+    if (device.sensorEndpoints && device.sensorEndpoints.length > 0) {
+      setLoading(true);
+      try {
+        const results: Record<string, string> = {};
+        await Promise.all(
+          device.sensorEndpoints.map(async (ep) => {
+            const res = await fetch(ep.url);
+            const data = await res.json();
+            // Try to extract a simple numeric value; fall back to JSON stringify
+            const val = typeof data === "number" || typeof data === "string"
+              ? String(data)
+              : data?.value !== undefined
+                ? String(data.value)
+                : JSON.stringify(data);
+            results[ep.label] = val;
+          })
+        );
+        setMultiSensorData(results);
+        toast.success("Sensor data updated");
+      } catch {
+        toast.error("Failed to read sensor");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     if (!device.apiPath) return;
     setLoading(true);
     try {
@@ -265,6 +295,18 @@ const DeviceDetail = () => {
                   <p className="text-sm text-muted-foreground text-center py-6">
                     This sensor is not connected to a live API endpoint
                   </p>
+                ) : device.sensorEndpoints && multiSensorData ? (
+                  <div className="flex justify-center gap-4 flex-wrap">
+                    {device.sensorEndpoints.map((ep) => (
+                      <div key={ep.label} className="rounded-lg bg-secondary/50 p-4 text-center min-w-[120px]">
+                        <Activity className="h-5 w-5 text-primary mx-auto mb-1" />
+                        <p className="text-xs text-muted-foreground">{ep.label}</p>
+                        <p className="text-lg font-mono font-bold mt-0.5">
+                          {multiSensorData[ep.label] ?? "–"} {ep.unit}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 ) : sensorData ? (
                   <div className="flex justify-center">
                     <div className="rounded-lg bg-secondary/50 p-4 text-center min-w-[120px]">
