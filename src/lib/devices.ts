@@ -23,6 +23,8 @@ export interface Device {
   description: string;
   /** API path fragment used to build the full URL */
   apiPath: string;
+  /** For sensors with multiple readings */
+  sensorEndpoints?: SensorEndpoint[];
   /** For switches: the actions sub-path */
   actionsPath?: string;
   /** For switches: named operations */
