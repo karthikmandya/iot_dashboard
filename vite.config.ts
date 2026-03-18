@@ -17,6 +17,11 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/bosch/, ""),
       },
+      "/api/modbus": {
+        target: "http://10.189.230.81:8080",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/modbus/, ""),
+      },
     },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
