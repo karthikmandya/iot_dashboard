@@ -139,11 +139,13 @@ export const devices: Device[] = [
         label: "Current",
         url: "http://10.189.230.81:8080/modbus/links/1/input-registers/swapped-float?offset=22",
         unit: "A",
+        authHeader: MODBUS_AUTH_HEADER,
       },
       {
         label: "Voltage",
         url: "http://10.189.230.81:8080/modbus/links/1/input-registers/swapped-float?offset=20",
         unit: "V",
+        authHeader: MODBUS_AUTH_HEADER,
       },
     ],
   },
