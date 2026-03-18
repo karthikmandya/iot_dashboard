@@ -54,6 +54,7 @@ const iconMap: Record<string, React.ElementType> = {
   "humidity-sensor-1": Activity,
   "motion-sensor-1": Radio,
   "smart-plug-1": Plug,
+  "modbus-sensor-1": Activity,
 };
 
 interface SensorData {
