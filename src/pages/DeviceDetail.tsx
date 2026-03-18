@@ -26,7 +26,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { devices, authHeaders } from "@/lib/devices";
+import { devices, authHeaders, type SensorEndpoint } from "@/lib/devices";
 import {
   LineChart,
   Line,
