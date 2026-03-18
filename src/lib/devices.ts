@@ -6,6 +6,14 @@ export interface DeviceOperation {
   url: string;
 }
 
+export interface SensorEndpoint {
+  label: string;
+  url: string;
+  unit: string;
+  /** JSON path segments to extract the numeric value from the response */
+  valuePath?: string[];
+}
+
 export interface Device {
   id: string;
   name: string;
