@@ -114,15 +114,35 @@ const DeviceDetail = () => {
   const [sending, setSending] = useState(false);
   const [snapshotUrl, setSnapshotUrl] = useState<string | null>(null);
 
-  // Auto-refresh camera snapshot every 5 seconds
+  // Auto-refresh camera snapshot every 5 seconds using fetch with Basic Auth
   useEffect(() => {
     if (device?.type !== "camera" || !device.streamUrl) return;
-    const updateSnapshot = () => {
-      setSnapshotUrl(`${device.streamUrl}&_t=${Date.now()}`);
+    let revokePrev: string | null = null;
+
+    const fetchSnapshot = async () => {
+      try {
+        const res = await fetch(`${device.streamUrl}&_t=${Date.now()}`, {
+          headers: {
+            Authorization: "Basic " + btoa("service:Admin-12"),
+          },
+        });
+        if (!res.ok) throw new Error("Failed to fetch snapshot");
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        if (revokePrev) URL.revokeObjectURL(revokePrev);
+        revokePrev = url;
+        setSnapshotUrl(url);
+      } catch {
+        // silently retry on next interval
+      }
     };
-    updateSnapshot();
-    const interval = setInterval(updateSnapshot, 5000);
-    return () => clearInterval(interval);
+
+    fetchSnapshot();
+    const interval = setInterval(fetchSnapshot, 5000);
+    return () => {
+      clearInterval(interval);
+      if (revokePrev) URL.revokeObjectURL(revokePrev);
+    };
   }, [device?.type, device?.streamUrl]);
 
   const sendCameraCommand = useCallback(

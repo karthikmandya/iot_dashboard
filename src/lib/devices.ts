@@ -123,7 +123,7 @@ export const devices: Device[] = [
     location: "Lab – Entrance",
     description: "HD security camera with PTZ control",
     apiPath: "",
-    streamUrl: "/api/camera/snap.jpg?JpegCam=1",
+    streamUrl: "http://10.189.230.71/snap.jpg?JpegCam=1",
     controlEndpoint: "/api/bosch/camera/ptz",
   },
   {
