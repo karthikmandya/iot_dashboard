@@ -26,6 +26,9 @@ export default defineConfig(({ mode }) => ({
         target: "http://10.189.230.71",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/camera/, ""),
+        headers: {
+          Authorization: "Basic " + Buffer.from("service:Admin-12").toString("base64"),
+        },
       },
     },
   },
