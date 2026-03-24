@@ -121,8 +121,7 @@ const DeviceDetail = () => {
 
     const fetchSnapshot = async () => {
       try {
-        const res = await fetch(`${device.streamUrl}&_t=${Date.now()}`);
-        if (!res.ok) throw new Error(`Snapshot failed: ${res.status}`);
+        const res = await fetch(device.streamUrl, { cache: "no-store" });
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         if (revokePrev) URL.revokeObjectURL(revokePrev);
