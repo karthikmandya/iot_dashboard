@@ -112,6 +112,18 @@ const DeviceDetail = () => {
   const [zoom, setZoom] = useState(50);
   const [cameraCoords, setCameraCoords] = useState({ x: 0, y: 0, z: 0 });
   const [sending, setSending] = useState(false);
+  const [snapshotUrl, setSnapshotUrl] = useState<string | null>(null);
+
+  // Auto-refresh camera snapshot every 5 seconds
+  useEffect(() => {
+    if (device?.type !== "camera" || !device.streamUrl) return;
+    const updateSnapshot = () => {
+      setSnapshotUrl(`${device.streamUrl}&_t=${Date.now()}`);
+    };
+    updateSnapshot();
+    const interval = setInterval(updateSnapshot, 5000);
+    return () => clearInterval(interval);
+  }, [device?.type, device?.streamUrl]);
 
   const sendCameraCommand = useCallback(
     async (dx: number, dy: number, dz: number) => {
