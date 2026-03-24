@@ -114,19 +114,15 @@ const DeviceDetail = () => {
   const [sending, setSending] = useState(false);
   const [snapshotUrl, setSnapshotUrl] = useState<string | null>(null);
 
-  // Auto-refresh camera snapshot every 5 seconds using fetch with Basic Auth
+  // Auto-refresh camera snapshot every 5 seconds via proxy (proxy injects auth)
   useEffect(() => {
     if (device?.type !== "camera" || !device.streamUrl) return;
     let revokePrev: string | null = null;
 
     const fetchSnapshot = async () => {
       try {
-        const res = await fetch(`${device.streamUrl}&_t=${Date.now()}`, {
-          headers: {
-            Authorization: "Basic " + btoa("service:Admin-12"),
-          },
-        });
-        if (!res.ok) throw new Error("Failed to fetch snapshot");
+        const res = await fetch(`${device.streamUrl}&_t=${Date.now()}`);
+        if (!res.ok) throw new Error(`Snapshot failed: ${res.status}`);
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         if (revokePrev) URL.revokeObjectURL(revokePrev);
