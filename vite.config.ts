@@ -22,6 +22,11 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/modbus/, ""),
       },
+      "/api/camera": {
+        target: "http://10.189.230.71",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/camera/, ""),
+      },
     },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
