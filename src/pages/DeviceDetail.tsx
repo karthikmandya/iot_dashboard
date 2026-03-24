@@ -261,10 +261,10 @@ const DeviceDetail = () => {
   };
 
   return (
-    <div className="min-h-screen p-6 md:p-10">
-      <div className="max-w-2xl mx-auto space-y-6">
+    <div className="min-h-screen px-4 py-6 md:px-8 md:py-8">
+      <div className="mx-auto max-w-5xl space-y-6">
         {/* Back + Header */}
-        <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="gap-2 -ml-2">
+        <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="gap-2 text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> Dashboard
         </Button>
 
