@@ -593,11 +593,21 @@ const DeviceDetail = () => {
                 {device.streamUrl ? (
                   <div className="space-y-3">
                     <div className="relative w-full rounded-lg overflow-hidden bg-black aspect-video">
-                      <img
-                        src={device.streamUrl}
-                        alt={`${device.name} live stream`}
-                        className="w-full h-full object-contain"
-                      />
+                      {snapshotUrl ? (
+                        <img
+                          src={snapshotUrl}
+                          alt={`${device.name} live stream`}
+                          className="w-full h-full object-contain"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
+                          Loading snapshot…
+                        </div>
+                      )}
+                      <div className="absolute top-2 right-2 flex items-center gap-1.5 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                        <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                        LIVE
+                      </div>
                     </div>
                     <a
                       href={device.streamUrl}
