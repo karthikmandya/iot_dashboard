@@ -102,7 +102,7 @@ export const devices: Device[] = [
   },
   {
     id: "smart-bulb-1",
-    name: "Zigbee Bulb",
+    name: "Bulb",
     type: "bulb",
     status: "online",
     location: "Lab – Zone B",
