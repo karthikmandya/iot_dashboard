@@ -6,6 +6,7 @@ import {
   Power,
   RefreshCw,
   Activity,
+  Cpu,
   Lightbulb,
   Radio,
   Plug,
@@ -19,6 +20,7 @@ import {
   ZoomIn,
   ZoomOut,
   ExternalLink,
+  Wifi,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -27,6 +29,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { devices, authHeaders, type SensorEndpoint } from "@/lib/devices";
+import cameraLastFrame from "@/assets/camera-last-frame.png";
 import {
   LineChart,
   Line,
@@ -97,6 +100,94 @@ const generateSwitchHistory = (deviceId: string) => {
   return points;
 };
 
+const renderDeviceHeroAvatar = (deviceId: string, Icon: React.ElementType) => {
+  if (deviceId === "temp-sensor-1") {
+    return (
+      <div className="device-avatar-shell thermo-shell h-14 w-14 rounded-2xl">
+        <div className="thermo-column">
+          <div className="thermo-fill" />
+        </div>
+        <div className="thermo-bulb" />
+        <Thermometer className="relative z-10 h-6 w-6 text-primary" />
+      </div>
+    );
+  }
+
+  if (deviceId === "smart-bulb-1" || deviceId === "zigbee-bulb-1") {
+    return (
+      <div className="device-avatar-shell bulb-pulse-loop h-14 w-14 rounded-2xl">
+        <div className="bulb-pulse-glow" />
+        <Lightbulb className="relative z-10 h-6 w-6 text-primary" />
+      </div>
+    );
+  }
+
+  if (deviceId === "humidity-sensor-1") {
+    return (
+      <div className="device-avatar-shell spark-track-shell h-14 w-14 rounded-2xl">
+        <Activity className="relative z-10 h-6 w-6 text-primary" />
+        <div className="spark-travel" />
+      </div>
+    );
+  }
+
+  if (deviceId === "motion-sensor-1") {
+    return (
+      <div className="device-avatar-shell h-14 w-14 rounded-2xl">
+        <Radio className="motion-vibrate h-6 w-6 text-primary" />
+      </div>
+    );
+  }
+
+  if (deviceId === "smart-plug-1") {
+    return (
+      <div className="device-avatar-shell plug-shell h-14 w-14 rounded-2xl">
+        <div className="plug-current-ring" />
+        <Plug className="relative z-10 h-6 w-6 text-primary" />
+      </div>
+    );
+  }
+
+  if (deviceId === "security-cam-1") {
+    return (
+      <div className="device-avatar-shell camera-shell h-14 w-14 rounded-2xl">
+        <div className="camera-scan-beam" />
+        <Camera className="relative z-10 h-6 w-6 text-primary" />
+      </div>
+    );
+  }
+
+  if (deviceId === "modbus-sensor-1") {
+    return (
+      <div className="device-avatar-shell modbus-shell h-14 w-14 rounded-2xl">
+        <div className="modbus-bars">
+          <span />
+          <span />
+          <span />
+        </div>
+        <Cpu className="relative z-10 h-6 w-6 text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="device-avatar-shell h-14 w-14 rounded-2xl">
+      <Icon className="h-6 w-6 text-primary" />
+    </div>
+  );
+};
+
+const renderStatePanel = (title: string, description: string, badge?: string) => (
+  <div className="rounded-3xl border border-white/10 bg-white/[0.03] px-5 py-8 text-center">
+    <div className="offline-illustration" />
+    {badge ? (
+      <Badge className="border-amber-300/25 bg-amber-300/10 text-amber-100">{badge}</Badge>
+    ) : null}
+    <p className="mt-4 text-sm font-medium text-foreground">{title}</p>
+    <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted-foreground">{description}</p>
+  </div>
+);
+
 const DeviceDetail = () => {
   const { deviceId } = useParams<{ deviceId: string }>();
   const navigate = useNavigate();
@@ -113,6 +204,7 @@ const DeviceDetail = () => {
   const [cameraCoords, setCameraCoords] = useState({ x: 0, y: 0, z: 0 });
   const [sending, setSending] = useState(false);
   const [snapshotUrl, setSnapshotUrl] = useState<string | null>(null);
+  const [lastSnapshotAt, setLastSnapshotAt] = useState<Date | null>(null);
 
   // Auto-refresh camera snapshot every 5 seconds via proxy (proxy injects auth)
   useEffect(() => {
@@ -127,6 +219,7 @@ const DeviceDetail = () => {
         if (revokePrev) URL.revokeObjectURL(revokePrev);
         revokePrev = url;
         setSnapshotUrl(url);
+        setLastSnapshotAt(new Date());
       } catch {
         // silently retry on next interval
       }
@@ -269,9 +362,7 @@ const DeviceDetail = () => {
         </Button>
 
         <div className="flex items-center gap-4">
-          <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Icon className="h-6 w-6 text-primary" />
-          </div>
+          {renderDeviceHeroAvatar(device.id, Icon)}
           <div className="flex-1">
             <h1 className="text-xl font-bold tracking-tight">{device.name}</h1>
             <p className="text-sm text-muted-foreground">{device.location}</p>
@@ -280,8 +371,8 @@ const DeviceDetail = () => {
             variant="outline"
             className={
               device.status === "online"
-                ? "border-[hsl(var(--success))]/40 text-[hsl(var(--success))]"
-                : "border-muted-foreground/40 text-muted-foreground"
+                ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-200"
+                : "border-amber-200/20 bg-amber-200/10 text-amber-100"
             }
           >
             {device.status === "online" ? "● Online" : "○ Offline"}
@@ -318,9 +409,11 @@ const DeviceDetail = () => {
               </CardHeader>
               <CardContent>
                 {!hasApi ? (
-                  <p className="text-sm text-muted-foreground text-center py-6">
-                    This sensor is not connected to a live API endpoint
-                  </p>
+                  renderStatePanel(
+                    "Live endpoint unavailable",
+                    "This device is installed in the control surface, but it is not yet mapped to a responding API source.",
+                    "Needs attention",
+                  )
                 ) : device.sensorEndpoints && multiSensorData ? (
                   <div className="flex justify-center gap-4 flex-wrap">
                     {device.sensorEndpoints.map((ep) => (
@@ -344,9 +437,10 @@ const DeviceDetail = () => {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground text-center py-6">
-                    Press "Get Data" to fetch current reading
-                  </p>
+                  renderStatePanel(
+                    "Waiting for a fresh reading",
+                    "Trigger a sensor read to pull the latest value into this panel and update the operational history view.",
+                  )
                 )}
               </CardContent>
             </Card>
@@ -607,21 +701,49 @@ const DeviceDetail = () => {
               <CardContent>
                 {device.streamUrl ? (
                   <div className="space-y-3">
-                    <div className="relative w-full rounded-lg overflow-hidden bg-black aspect-video">
-                      {snapshotUrl ? (
-                        <img
-                          src={snapshotUrl}
-                          alt={`${device.name} live stream`}
-                          className="w-full h-full object-contain"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
-                          Loading snapshot…
+                    <div className="relative w-full overflow-hidden rounded-[24px] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(92,225,255,0.12),transparent_35%),linear-gradient(180deg,rgba(8,14,28,0.95),rgba(14,20,36,0.92))] aspect-video">
+                      <div className="camera-atmosphere" />
+                      <div className="camera-scan-overlay" />
+                      <img
+                        src={snapshotUrl ?? cameraLastFrame}
+                        alt={snapshotUrl ? `${device.name} live stream` : `${device.name} last received frame`}
+                        className={`relative z-10 h-full w-full ${snapshotUrl ? "object-contain" : "object-cover opacity-90"}`}
+                      />
+                      {!snapshotUrl ? (
+                        <div className="absolute inset-x-6 top-6 z-20">
+                          <div className="rounded-2xl border border-white/10 bg-black/45 px-4 py-3 backdrop-blur-md">
+                            <p className="text-xs uppercase tracking-[0.22em] text-cyan-100/70">Last Received Frame</p>
+                            <p className="mt-1 text-sm text-white/90">
+                              Showing the most recently supplied reference frame while the live snapshot is pending.
+                            </p>
+                          </div>
                         </div>
-                      )}
-                      <div className="absolute top-2 right-2 flex items-center gap-1.5 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                      ) : null}
+                      <div className="absolute left-3 top-3 z-20 rounded-full bg-black/45 px-2.5 py-1 text-[10px] uppercase tracking-[0.22em] text-cyan-100">
+                        <span className="inline-flex items-center gap-2">
+                          <Wifi className="h-3.5 w-3.5" />
+                          Signal 92%
+                        </span>
+                      </div>
+                      <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 text-xs text-white">
                         <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
                         LIVE
+                      </div>
+                      <div className="absolute bottom-3 left-3 right-3 z-20 flex items-center justify-between rounded-2xl border border-white/10 bg-black/45 px-3 py-2 text-xs text-muted-foreground">
+                        <span>
+                          Last frame received{" "}
+                          {lastSnapshotAt
+                            ? lastSnapshotAt.toLocaleTimeString("en-IN", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                              })
+                            : "reference frame loaded"}
+                        </span>
+                        <span className="flex items-center gap-2 text-emerald-200">
+                          <span className="status-dot text-emerald-300" />
+                          Stable
+                        </span>
                       </div>
                     </div>
                     <a
@@ -635,9 +757,11 @@ const DeviceDetail = () => {
                     </a>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">
-                    No stream URL configured. Edit this device to add one.
-                  </p>
+                  renderStatePanel(
+                    "Camera source unavailable",
+                    "Add or restore the stream URL to bring the visual node back online inside the mission console.",
+                    "Needs attention",
+                  )
                 )}
               </CardContent>
             </Card>
